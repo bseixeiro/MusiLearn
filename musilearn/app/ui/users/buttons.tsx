@@ -14,7 +14,6 @@ export function UpdateUser({ id }: { id: string }) {
 
 export function DeleteUser({ id }: { id: string }) {
     // const deleteInvoiceWithId = deleteInvoice.bind(null, id);
-  console.log(id);
   return (
     <form>
       <button type="submit" className="rounded-md border p-2 hover:bg-gray-100">

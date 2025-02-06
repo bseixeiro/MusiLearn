@@ -1,6 +1,5 @@
 import { UpdateUser, DeleteUser } from "@/app/ui/users/buttons";
 import { fetchFilteredUsers } from "@/app/lib/data";
-// import { fetchFilteredusers } from "@/app/lib/data";
 
 export default async function UsersTable({
   query,
@@ -84,7 +83,7 @@ export default async function UsersTable({
                   <td className="whitespace-nowrap px-3 py-3">{user.email}</td>
                   <td className="whitespace-nowrap px-3 py-3">{user.role}</td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {user.createdAt.toString()}
+                    {user.createdat.toDateString()}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

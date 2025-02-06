@@ -1,27 +1,56 @@
-import { users } from "./placeholder-data";
+import postgres from 'postgres';
+import { User } from './definition';
 
-export async function fetchUsers(){
-    return users
-}
+// export async function fetchUsers(){
+//     return users
+// }
+
+ 
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const ITEMS_PER_PAGE = 3
 
 export async function fetchFilteredUsers(
     query: string,
     currentPage: number,
   ){
-    const data = users.filter(u => { if (u.name.includes(query) || u.email.includes(query) || u.role.includes(query)) return u})
-    return data
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const users = await sql<User[]>`
+      SELECT
+        *
+      FROM users
+      WHERE
+        name ILIKE ${`%${query}%`} OR
+        email ILIKE ${`%${query}%`} OR
+        createdat::text ILIKE ${`%${query}%`} OR
+        role ILIKE ${`%${query}%`}
+      ORDER BY role
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return users;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoices.');
+  }
 }
 
 export async function fetchUsersPages(query: string) {
-    const ITEMS_PER_PAGE = 3
-    
-    try {
-      const data = users.filter(u => { if (u.name.includes(query) || u.email.includes(query) || u.role.includes(query)) return u})
-  
-      const totalPages = Math.ceil(Number(data.length) / ITEMS_PER_PAGE);
-      return totalPages;
-    } catch (error) {
-      console.error('Database Error:', error);
-      throw new Error('Failed to fetch total number of invoices.');
-    }
+  try {
+    const data = await sql`SELECT COUNT(*)
+    FROM users
+      WHERE
+        name ILIKE ${`%${query}%`} OR
+        email ILIKE ${`%${query}%`} OR
+        createdAt::text ILIKE ${`%${query}%`} OR
+        role ILIKE ${`%${query}%`}
+  `;
+
+    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of invoices.');
+  }
   }

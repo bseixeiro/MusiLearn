@@ -4,7 +4,7 @@ export type User = {
     password: string;
     name: string;
     role: string;
-    createdAt: Date;
+    createdat: Date;
 };
 
 export type Course = {
